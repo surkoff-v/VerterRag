@@ -19,3 +19,6 @@ It allows users to **upload a PDF document and ask questions** based on its cont
 ```bash
 git clone https://github.com/yourusername/verter-rag-chatbot.git
 cd verter-rag-chatbot
+you will have to add .env file with OPENAI_API_KEY
+py .\verter.py
+
