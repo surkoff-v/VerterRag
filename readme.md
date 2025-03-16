@@ -19,7 +19,14 @@ It allows users to **upload a PDF document and ask questions** based on its cont
 ```bash
 git clone https://github.com/surkoff-v/VerterRag.git
 cd VerterRag
+```
 you will have to add .env file with OPENAI_API_KEY
-to run py .\verter.py
+```bash
+python3.11 -m venv venv  # Create a virtual environment with Python 3.11
+source venv/bin/activate  # Activate (Mac/Linux)
+venv\Scripts\activate  # Activate (Windows)
+pip install -r requirements.txt  # Install dependencies inside the virtual environment
+py .\verter.py
+```
 then open you browser at http://127.0.0.1:7860/
 
