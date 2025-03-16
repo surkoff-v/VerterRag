@@ -17,7 +17,7 @@ last_uploaded_file = None  # Track the last processed file
 
 ## LLM
 def get_llm():
-    return ChatOpenAI(model="gpt-4o-mini")
+    return ChatOpenAI(model="gpt-4o")
 
 
 ## Document loader
@@ -28,7 +28,7 @@ def document_loader(file_path):
 
 ## Text splitter
 def text_splitter(data):
-    splitter = RecursiveCharacterTextSplitter(chunk_size=256, chunk_overlap=50, length_function=len)
+    splitter = RecursiveCharacterTextSplitter(chunk_size=512, chunk_overlap=100, length_function=len)
     return splitter.split_documents(data)
 
 
@@ -37,7 +37,8 @@ def vector_database(chunks):
     global vectordb_cache
     if vectordb_cache is None:
         print("Creating new vector database...")
-        embedding_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+        embedding_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-mpnet-base-v2")
+        #embedding_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
         vectordb_cache = Chroma.from_documents(chunks, embedding_model)
     else:
         print("Using cached vector database...")
@@ -60,7 +61,7 @@ def retriever(file_path):
         chunks = text_splitter(splits)
         vectordb_cache = vector_database(chunks)
 
-    return vectordb_cache.as_retriever(search_kwargs={'k': 10})
+    return vectordb_cache.as_retriever(search_kwargs={'k': 15})
 
 
 ## QA Chain
