@@ -17,8 +17,9 @@ It allows users to **upload a PDF document and ask questions** based on its cont
 
 ### **1️⃣ Clone the Repository**
 ```bash
-git clone https://github.com/yourusername/verter-rag-chatbot.git
-cd verter-rag-chatbot
+git clone https://github.com/surkoff-v/VerterRag.git
+cd VerterRag
 you will have to add .env file with OPENAI_API_KEY
-py .\verter.py
+to run py .\verter.py
+then open you browser at http://127.0.0.1:7860/
 
