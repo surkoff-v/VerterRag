@@ -1,10 +1,12 @@
 import os
 import gradio as gr
+import pdfplumber
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Chroma
 from langchain_community.document_loaders import PyPDFLoader
 from langchain.chains import RetrievalQA
+from langchain_core.documents import Document
 from langchain_openai import ChatOpenAI
 from dotenv import load_dotenv
 
@@ -19,9 +21,19 @@ last_uploaded_file = None  # Track the last processed file
 def get_llm():
     return ChatOpenAI(model="gpt-4o")
 
+def pdfplumber_loader(file_path):
+    """Loads a PDF file using pdfplumber to avoid PyPDF errors."""
+    docs = []
+    with pdfplumber.open(file_path) as pdf:
+        for i, page in enumerate(pdf.pages):
+            text = page.extract_text()
+            if text:
+                docs.append(Document(page_content=text, metadata={"page": i + 1}))
+    return docs
+
 
 ## Document loader
-def document_loader(file_path):
+def py_pdf_loader(file_path):
     loader = PyPDFLoader(file_path)
     return loader.load()
 
@@ -57,7 +69,7 @@ def retriever(file_path):
 
     # Process the document if cache is empty
     if vectordb_cache is None:
-        splits = document_loader(file_path)
+        splits = pdfplumber_loader(file_path)
         chunks = text_splitter(splits)
         vectordb_cache = vector_database(chunks)
 
