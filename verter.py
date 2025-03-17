@@ -9,8 +9,10 @@ from langchain.chains import RetrievalQA
 from langchain_core.documents import Document
 from langchain_openai import ChatOpenAI
 from dotenv import load_dotenv
+import torch
 
 load_dotenv()
+
 
 ## Global variables to store the vector database and file path
 vectordb_cache = None
@@ -49,8 +51,19 @@ def vector_database(chunks):
     global vectordb_cache
     if vectordb_cache is None:
         print("Creating new vector database...")
-        embedding_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-mpnet-base-v2")
-        #embedding_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+        device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
+        # Initialize the embedding model with the specified device
+        embedding_model = HuggingFaceEmbeddings(
+            model_name="sentence-transformers/all-mpnet-base-v2",
+            model_kwargs={'device': device}
+        )
+
+        if device == 'cuda':
+            print("Using GPU for embeddings.")
+        else:
+            print("CUDA is not available. Using CPU instead.")
+
         vectordb_cache = Chroma.from_documents(chunks, embedding_model)
     else:
         print("Using cached vector database...")
